@@ -1,0 +1,28 @@
+---
+/**
+ * Auth Guard component
+ * Redirects to login if user is not authenticated
+ * Use this component to wrap protected pages
+ */
+---
+
+<div id="auth-guard">
+  <slot />
+</div>
+
+<script>
+  import { authStore } from '@/lib/stores/auth.store';
+
+  const unsubscribe = authStore.subscribe((state) => {
+    if (!state.loading && !state.user) {
+      // User is not authenticated, redirect to login
+      const currentPath = window.location.pathname;
+      window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+    }
+  });
+
+  // Cleanup on page unload
+  window.addEventListener('beforeunload', () => {
+    unsubscribe();
+  });
+</script>

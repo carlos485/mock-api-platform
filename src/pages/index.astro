@@ -1,11 +1,25 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Layout from '@/layouts/Layout.astro';
 ---
 
 <Layout>
-	<Welcome />
+  <div class="flex items-center justify-center min-h-screen">
+    <div class="loading loading-spinner loading-lg"></div>
+  </div>
 </Layout>
+
+<script>
+  import { authStore } from '@/lib/stores/auth.store';
+
+  const unsubscribe = authStore.subscribe((state) => {
+    if (!state.loading) {
+      if (state.user) {
+        // User is authenticated, redirect to dashboard
+        window.location.href = '/dashboard';
+      } else {
+        // User is not authenticated, redirect to login
+        window.location.href = '/login';
+      }
+    }
+  });
+</script>

@@ -1,0 +1,164 @@
+---
+// Login component with Firebase UI
+---
+
+<div class="min-h-screen flex items-center justify-center bg-base-200">
+  <div class="card w-full max-w-md bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title text-center justify-center text-2xl mb-4">Iniciar Sesión</h2>
+      <div id="firebaseui-auth-container"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { auth } from '@/lib/firebase/config';
+  import * as firebaseui from 'firebaseui';
+  import 'firebaseui/dist/firebaseui.css';
+  import { GoogleAuthProvider, EmailAuthProvider } from 'firebase/auth';
+
+  // Initialize FirebaseUI
+  const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
+
+  const uiConfig = {
+    callbacks: {
+      signInSuccessWithAuthResult: function(authResult: any, redirectUrl?: string) {
+        // User successfully signed in
+        window.location.href = '/dashboard';
+        return false;
+      },
+      uiShown: function() {
+        // The widget is rendered
+        const loader = document.getElementById('loader');
+        if (loader) loader.style.display = 'none';
+      }
+    },
+    signInFlow: 'popup',
+    signInOptions: [
+      GoogleAuthProvider.PROVIDER_ID,
+      {
+        provider: EmailAuthProvider.PROVIDER_ID,
+        requireDisplayName: true,
+        signInMethod: EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD,
+      },
+    ],
+    tosUrl: '/terms',
+    privacyPolicyUrl: '/privacy',
+  };
+
+  // Start FirebaseUI
+  ui.start('#firebaseui-auth-container', uiConfig);
+</script>
+
+<style is:global>
+  /* FirebaseUI customization for DaisyUI theme */
+  .firebaseui-container {
+    font-family: inherit;
+  }
+
+  .firebaseui-card-content {
+    padding: 0;
+  }
+
+  .firebaseui-title {
+    display: none;
+  }
+
+  /* Buttons styling with DaisyUI */
+  .firebaseui-idp-button,
+  .firebaseui-tenant-button {
+    max-width: 100%;
+    border-radius: 0.5rem !important;
+    font-weight: 600;
+    text-transform: none;
+    padding: 0.75rem 1rem;
+    transition: all 0.2s;
+  }
+
+  /* Google button */
+  .firebaseui-idp-google {
+    background-color: hsl(var(--b1)) !important;
+    color: hsl(var(--bc)) !important;
+    border: 2px solid hsl(var(--bc) / 0.2) !important;
+  }
+
+  .firebaseui-idp-google:hover {
+    background-color: hsl(var(--b2)) !important;
+    border-color: hsl(var(--bc) / 0.3) !important;
+  }
+
+  /* Email button */
+  .firebaseui-idp-password {
+    background-color: hsl(var(--p)) !important;
+    color: hsl(var(--pc)) !important;
+  }
+
+  .firebaseui-idp-password:hover {
+    background-color: hsl(var(--pf)) !important;
+  }
+
+  /* Form inputs */
+  .firebaseui-input,
+  .firebaseui-input-invalid {
+    border-radius: 0.5rem;
+    border: 1px solid hsl(var(--bc) / 0.2);
+    background-color: hsl(var(--b1));
+    color: hsl(var(--bc));
+    padding: 0.75rem 1rem;
+  }
+
+  .firebaseui-input:focus {
+    outline: 2px solid hsl(var(--p));
+    outline-offset: 2px;
+    border-color: hsl(var(--p));
+  }
+
+  /* Labels */
+  .firebaseui-label {
+    color: hsl(var(--bc));
+    font-weight: 600;
+  }
+
+  /* Submit buttons */
+  .firebaseui-button {
+    border-radius: 0.5rem !important;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .firebaseui-form-actions .mdl-button--raised.mdl-button--colored {
+    background-color: hsl(var(--p)) !important;
+    color: hsl(var(--pc)) !important;
+  }
+
+  .firebaseui-form-actions .mdl-button--raised.mdl-button--colored:hover {
+    background-color: hsl(var(--pf)) !important;
+  }
+
+  /* Links */
+  .firebaseui-link {
+    color: hsl(var(--p));
+  }
+
+  .firebaseui-link:hover {
+    color: hsl(var(--pf));
+  }
+
+  /* Error messages */
+  .firebaseui-error {
+    color: hsl(var(--er));
+  }
+
+  /* Card background */
+  .firebaseui-card-content,
+  .mdl-card {
+    background-color: transparent !important;
+  }
+
+  /* Text colors */
+  .firebaseui-text,
+  .firebaseui-subtitle,
+  .firebaseui-info-bar-message {
+    color: hsl(var(--bc));
+  }
+</style>
