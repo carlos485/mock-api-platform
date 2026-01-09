@@ -18,10 +18,13 @@
   },
   "devDependencies": {
     "@astrojs/tailwind": "^6.0.2",
+    "@iconify/json": "^2.2.425",
+    "@iconify/tailwind": "^1.2.0",
     "@types/node": "^25.0.3",
     "autoprefixer": "^10.4.23",
     "daisyui": "^5.5.14",
     "postcss": "^8.5.6",
+    "prettier-plugin-astro": "^0.14.1",
     "tailwindcss": "3"
   }
 }

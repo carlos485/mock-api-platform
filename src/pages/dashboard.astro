@@ -1,6 +1,52 @@
 ---
-import Layout from '@/layouts/Layout.astro';
-import AuthGuard from '@/components/AuthGuard.astro';
+import Layout from "@/layouts/Layout.astro";
+import AuthGuard from "@/components/AuthGuard.astro";
+
+// Mock API endpoints data
+const mockEndpoints = [
+  {
+    id: 1,
+    method: "GET",
+    name: "Obtener usuarios",
+    examples: 3,
+    methodColor: "success",
+  },
+  {
+    id: 2,
+    method: "POST",
+    name: "Crear usuario",
+    examples: 2,
+    methodColor: "info",
+  },
+  {
+    id: 3,
+    method: "PUT",
+    name: "Actualizar producto",
+    examples: 4,
+    methodColor: "warning",
+  },
+  {
+    id: 4,
+    method: "DELETE",
+    name: "Eliminar comentario",
+    examples: 1,
+    methodColor: "error",
+  },
+  {
+    id: 5,
+    method: "GET",
+    name: "Listar productos",
+    examples: 5,
+    methodColor: "success",
+  },
+  {
+    id: 6,
+    method: "PATCH",
+    name: "Actualizar perfil",
+    examples: 2,
+    methodColor: "warning",
+  },
+];
 ---
 
 <Layout>
@@ -12,12 +58,19 @@ import AuthGuard from '@/components/AuthGuard.astro';
         </div>
         <div class="flex-none">
           <div class="dropdown dropdown-end">
-            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar placeholder">
+            <div
+              tabindex="0"
+              role="button"
+              class="btn btn-ghost btn-circle avatar placeholder"
+            >
               <div class="bg-neutral text-neutral-content rounded-full w-10">
                 <span id="user-avatar">U</span>
               </div>
             </div>
-            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+            <ul
+              tabindex="0"
+              class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+            >
               <li><a id="profile-link">Perfil</a></li>
               <li><a id="logout-btn">Cerrar Sesión</a></li>
             </ul>
@@ -30,7 +83,9 @@ import AuthGuard from '@/components/AuthGuard.astro';
           <div class="hero-content text-center">
             <div class="max-w-md">
               <h1 class="text-5xl font-bold">Bienvenido!</h1>
-              <p class="py-6" id="welcome-message">Estás autenticado correctamente.</p>
+              <p class="py-6" id="welcome-message">
+                Estás autenticado correctamente.
+              </p>
               <div class="stats shadow">
                 <div class="stat">
                   <div class="stat-title">Email</div>
@@ -41,25 +96,49 @@ import AuthGuard from '@/components/AuthGuard.astro';
           </div>
         </div>
       </div>
+
+      <div class="container mx-auto p-8">
+        <ul class="list bg-base-100 rounded-box shadow-md">
+          {
+            mockEndpoints.map((endpoint) => (
+              <li class="list-row">
+                <div class={`badge badge-soft badge-${endpoint.methodColor}`}>
+                  {endpoint.method}
+                </div>
+                <div>
+                  <div class="text-md">{endpoint.name}</div>
+                  <div class="text-xs uppercase font-semibold opacity-60">
+                    {endpoint.examples} ejemplo{endpoint.examples !== 1 ? "s" : ""}
+                  </div>
+                </div>
+                <button class="btn btn-square btn-ghost">
+                  <span class="icon-[bxs--trash]" />
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
     </div>
   </AuthGuard>
 </Layout>
 
 <script>
-  import { authStore } from '@/lib/stores/auth.store';
-  import { AuthService } from '@/lib/services/auth.service';
+  import { authStore } from "@/lib/stores/auth.store";
+  import { AuthService } from "@/lib/services/auth.service";
 
-  const logoutBtn = document.getElementById('logout-btn');
-  const userEmail = document.getElementById('user-email');
-  const userAvatar = document.getElementById('user-avatar');
-  const welcomeMessage = document.getElementById('welcome-message');
+  const logoutBtn = document.getElementById("logout-btn");
+  const userEmail = document.getElementById("user-email");
+  const userAvatar = document.getElementById("user-avatar");
+  const welcomeMessage = document.getElementById("welcome-message");
 
   // Subscribe to auth state
-  const unsubscribe = authStore.subscribe((state) => {
+  const unsubscribe = authStore.subscribe(state => {
     if (state.user) {
-      if (userEmail) userEmail.textContent = state.user.email || '-';
+      if (userEmail) userEmail.textContent = state.user.email || "-";
       if (userAvatar) {
-        const initial = state.user.displayName?.[0] || state.user.email?.[0] || 'U';
+        const initial =
+          state.user.displayName?.[0] || state.user.email?.[0] || "U";
         userAvatar.textContent = initial.toUpperCase();
       }
       if (welcomeMessage) {
@@ -70,18 +149,18 @@ import AuthGuard from '@/components/AuthGuard.astro';
   });
 
   // Handle logout
-  logoutBtn?.addEventListener('click', async (e) => {
+  logoutBtn?.addEventListener("click", async e => {
     e.preventDefault();
     try {
       await AuthService.logout();
-      window.location.href = '/login';
+      window.location.href = "/login";
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.error("Error logging out:", error);
     }
   });
 
   // Cleanup
-  window.addEventListener('beforeunload', () => {
+  window.addEventListener("beforeunload", () => {
     unsubscribe();
   });
 </script>
