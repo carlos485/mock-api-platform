@@ -1,0 +1,45 @@
+---
+interface Endpoint {
+  id: number;
+  method: string;
+  name: string;
+  examples: number;
+  methodColor: string;
+}
+
+interface Props {
+  endpoints: Endpoint[];
+}
+
+const { endpoints } = Astro.props;
+
+// Badge color mapping
+const badgeClasses: Record<string, string> = {
+  success: "badge badge-soft badge-success",
+  info: "badge badge-soft badge-info",
+  warning: "badge badge-soft badge-warning",
+  error: "badge badge-soft badge-error",
+};
+---
+
+<ul class="list bg-base-100 rounded-box shadow-md">
+  {
+    endpoints.map((endpoint) => (
+      <li class="list-row transition-all duration-300 cursor-pointer hover:bg-gray-800">
+        <div class={badgeClasses[endpoint.methodColor]}>
+          {endpoint.method}
+        </div>
+        <div>
+          <div class="text-md">{endpoint.name}</div>
+          <div class="text-xs uppercase font-semibold opacity-60">
+            {endpoint.examples} ejemplo
+            {endpoint.examples !== 1 ? "s" : ""}
+          </div>
+        </div>
+        <button class="btn btn-square btn-ghost">
+          <span class="icon-[bxs--trash]" />
+        </button>
+      </li>
+    ))
+  }
+</ul>
