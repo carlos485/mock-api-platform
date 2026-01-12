@@ -9,6 +9,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/node": "^9.5.1",
     "@hono/node-server": "^1.19.7",
     "astro": "^5.16.6",
     "firebase": "^12.7.0",

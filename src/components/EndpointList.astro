@@ -26,17 +26,19 @@ const badgeClasses: Record<string, string> = {
   {
     endpoints.map((endpoint) => (
       <li class="list-row transition-all duration-300 cursor-pointer hover:bg-gray-800">
-        <div class={badgeClasses[endpoint.methodColor]}>
-          {endpoint.method}
-        </div>
-        <div>
-          <div class="text-md">{endpoint.name}</div>
-          <div class="text-xs uppercase font-semibold opacity-60">
-            {endpoint.examples} ejemplo
-            {endpoint.examples !== 1 ? "s" : ""}
+        <a href={`/endpoint/${endpoint.id}`} class="flex items-center gap-4 flex-1">
+          <div class={badgeClasses[endpoint.methodColor]}>
+            {endpoint.method}
           </div>
-        </div>
-        <button class="btn btn-square btn-ghost">
+          <div>
+            <div class="text-md">{endpoint.name}</div>
+            <div class="text-xs uppercase font-semibold opacity-60">
+              {endpoint.examples} ejemplo
+              {endpoint.examples !== 1 ? "s" : ""}
+            </div>
+          </div>
+        </a>
+        <button class="btn btn-square btn-ghost" onclick="event.stopPropagation()">
           <span class="icon-[bxs--trash]" />
         </button>
       </li>

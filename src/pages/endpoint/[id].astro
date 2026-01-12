@@ -1,0 +1,242 @@
+---
+export const prerender = false;
+
+import Layout from "@/layouts/Layout.astro";
+import AuthGuard from "@/components/AuthGuard.astro";
+import Navbar from "@/components/Navbar.astro";
+
+// Mock data - En producción vendría de una API o base de datos
+const mockEndpoints = [
+  {
+    id: 1,
+    method: "GET",
+    name: "Obtener usuarios",
+    endpoint: "/api/users",
+    description: "Obtiene una lista de todos los usuarios registrados en el sistema",
+    examples: 3,
+    methodColor: "success",
+    requestBody: null,
+    responseExample: {
+      success: true,
+      data: [
+        { id: 1, name: "Juan Pérez", email: "juan@example.com" },
+        { id: 2, name: "María García", email: "maria@example.com" }
+      ]
+    }
+  },
+  {
+    id: 2,
+    method: "POST",
+    name: "Crear usuario",
+    endpoint: "/api/users",
+    description: "Crea un nuevo usuario en el sistema",
+    examples: 2,
+    methodColor: "info",
+    requestBody: {
+      name: "string",
+      email: "string",
+      password: "string"
+    },
+    responseExample: {
+      success: true,
+      data: { id: 3, name: "Nuevo Usuario", email: "nuevo@example.com" }
+    }
+  },
+  {
+    id: 3,
+    method: "PUT",
+    name: "Actualizar producto",
+    endpoint: "/api/products/:id",
+    description: "Actualiza la información de un producto existente",
+    examples: 4,
+    methodColor: "warning",
+    requestBody: {
+      name: "string",
+      price: "number",
+      stock: "number"
+    },
+    responseExample: {
+      success: true,
+      data: { id: 1, name: "Producto Actualizado", price: 99.99, stock: 50 }
+    }
+  },
+  {
+    id: 4,
+    method: "DELETE",
+    name: "Eliminar comentario",
+    endpoint: "/api/comments/:id",
+    description: "Elimina un comentario del sistema",
+    examples: 1,
+    methodColor: "error",
+    requestBody: null,
+    responseExample: {
+      success: true,
+      message: "Comentario eliminado exitosamente"
+    }
+  },
+  {
+    id: 5,
+    method: "GET",
+    name: "Listar productos",
+    endpoint: "/api/products",
+    description: "Obtiene un listado de todos los productos disponibles",
+    examples: 5,
+    methodColor: "success",
+    requestBody: null,
+    responseExample: {
+      success: true,
+      data: [
+        { id: 1, name: "Laptop", price: 999.99, stock: 10 },
+        { id: 2, name: "Mouse", price: 29.99, stock: 50 }
+      ]
+    }
+  },
+  {
+    id: 6,
+    method: "PATCH",
+    name: "Actualizar perfil",
+    endpoint: "/api/profile",
+    description: "Actualiza parcialmente la información del perfil del usuario",
+    examples: 2,
+    methodColor: "warning",
+    requestBody: {
+      displayName: "string (opcional)",
+      avatar: "string (opcional)"
+    },
+    responseExample: {
+      success: true,
+      data: { id: 1, displayName: "Juan Actualizado", avatar: "https://..." }
+    }
+  },
+];
+
+const { id } = Astro.params;
+const endpoint = mockEndpoints.find(e => e.id === parseInt(id || "0"));
+
+// Si no se encuentra el endpoint, redirigir al dashboard
+if (!endpoint) {
+  return Astro.redirect("/dashboard");
+}
+
+const badgeClasses: Record<string, string> = {
+  success: "badge badge-soft badge-success",
+  info: "badge badge-soft badge-info",
+  warning: "badge badge-soft badge-warning",
+  error: "badge badge-soft badge-error",
+};
+---
+
+<Layout>
+  <AuthGuard>
+    <div class="min-h-screen bg-base-200">
+      <Navbar />
+
+      <div class="container mx-auto p-8">
+        <!-- Header -->
+        <div class="flex items-center gap-4 mb-6">
+          <a href="/dashboard" class="btn btn-ghost btn-circle">
+            <span class="icon-[mdi--arrow-left] text-2xl"></span>
+          </a>
+          <h1 class="text-4xl font-bold">{endpoint.name}</h1>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid gap-6">
+          <!-- Información General -->
+          <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+              <h2 class="card-title text-2xl">Información General</h2>
+              <div class="divider"></div>
+
+              <div class="grid gap-4">
+                <div class="flex items-center gap-4">
+                  <span class="font-semibold min-w-24">Método:</span>
+                  <div class={badgeClasses[endpoint.methodColor]}>
+                    {endpoint.method}
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                  <span class="font-semibold min-w-24">Endpoint:</span>
+                  <code class="bg-base-200 px-3 py-1 rounded-lg font-mono text-sm flex-1">
+                    {endpoint.endpoint}
+                  </code>
+                </div>
+
+                <div class="flex items-start gap-4">
+                  <span class="font-semibold min-w-24">Descripción:</span>
+                  <p class="flex-1">{endpoint.description}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Request Body -->
+          {endpoint.requestBody && (
+            <div class="card bg-base-100 shadow-xl">
+              <div class="card-body">
+                <h2 class="card-title text-2xl">Request Body</h2>
+                <div class="divider"></div>
+                <div class="mockup-code">
+                  <pre><code>{JSON.stringify(endpoint.requestBody, null, 2)}</code></pre>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <!-- Response Example -->
+          <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+              <h2 class="card-title text-2xl">Ejemplo de Respuesta</h2>
+              <div class="divider"></div>
+              <div class="mockup-code">
+                <pre><code>{JSON.stringify(endpoint.responseExample, null, 2)}</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Try it out -->
+          <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+              <h2 class="card-title text-2xl">Probar Endpoint</h2>
+              <div class="divider"></div>
+
+              <div class="form-control gap-4">
+                <div>
+                  <label class="label">
+                    <span class="label-text font-semibold">URL Completa</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={`https://api.example.com${endpoint.endpoint}`}
+                    class="input input-bordered w-full font-mono text-sm"
+                    readonly
+                  />
+                </div>
+
+                {endpoint.requestBody && (
+                  <div>
+                    <label class="label">
+                      <span class="label-text font-semibold">Body (JSON)</span>
+                    </label>
+                    <textarea
+                      class="textarea textarea-bordered w-full font-mono text-sm h-32"
+                      placeholder="Ingresa el body en formato JSON"
+                    ></textarea>
+                  </div>
+                )}
+
+                <div class="card-actions justify-end">
+                  <button class="btn btn-primary">
+                    <span class="icon-[mdi--send]"></span>
+                    Enviar Request
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </AuthGuard>
+</Layout>
